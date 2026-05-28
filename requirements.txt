@@ -1,0 +1,15 @@
+hyperliquid-python-sdk>=0.6.0
+python-dotenv>=1.0.1
+pydantic>=2.7.0
+redis>=5.0.1
+fastapi>=0.111.0
+uvicorn>=0.30.0
+pandas>=2.2.2
+numpy>=1.26.4
+plotly>=5.22.0
+jinja2>=3.1.4
+orjson>=3.10.3
+tenacity>=8.3.0
+websockets>=12.0
+httpx>=0.27.0
+loguru>=0.7.2

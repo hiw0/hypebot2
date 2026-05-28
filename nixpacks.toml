@@ -1,0 +1,17 @@
+[variables]
+PYTHONUNBUFFERED = "1"
+PIP_DISABLE_PIP_VERSION_CHECK = "1"
+
+# Let Nixpacks provide Python; avoid compiler collisions
+[phases.setup]
+# Provide Python and pip explicitly on Nix
+nixPkgs = ["python311", "python311Packages.pip"]
+
+[phases.install]
+cmds = [
+  "python3 --version && python3 -m pip --version",
+  "python3 -m pip install -v --prefer-binary --no-cache-dir -r requirements.txt",
+]
+
+[start]
+cmd = "python3 -m src.cli run"

@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: hypebot-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"  # Bind to localhost only for security
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      - hypebot-network
+
+  bot:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hypebot
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - PYTHONUNBUFFERED=1
+      - BOT_MODE=live
+      - BASE_COINS=BTC,ETH
+      - STRATEGY=mean_reversion
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    networks:
+      - hypebot-network
+    command: ["python", "-m", "src.cli", "run"]
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hypebot-dashboard
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DASHBOARD_HOST=0.0.0.0
+      - DASHBOARD_PORT=8000
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    networks:
+      - hypebot-network
+    command: ["python", "-m", "src.cli", "dashboard"]
+    ports:
+      - "8000:8000"
+
+volumes:
+  redis_data:
+
+networks:
+  hypebot-network:
+    driver: bridge
