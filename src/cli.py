@@ -192,11 +192,11 @@ def cmd_run(mode: Optional[str] = None, source: Optional[str] = None, strategy: 
                 # Generate trading signals for this coin
                 signal = strat.on_bar(df)
                 if settings.bot_mode == "live":
-                    executor.execute_signal(signal, asset_id=asset_id, price=px)
+                    executor.execute_signal(signal, asset_id=asset_id, coin=coin, price=px)
                 else:
                     logger.info("[PAPER] {} Signal: {} meta={} px={}", coin, signal.action, signal.meta, px)
                     # In paper mode, also run through executor to simulate trade + update PnL/Redis
-                    executor.execute_signal(signal, asset_id=asset_id, price=px)
+                    executor.execute_signal(signal, asset_id=asset_id, coin=coin, price=px)
 
             # Refresh deadman's switch periodically (once per cycle)
             if (now - last_deadman).total_seconds() >= max(10, settings.deadman_seconds // 2):
@@ -365,10 +365,10 @@ async def _run_ws_loop(settings) -> None:
             px = float(df["close"].iloc[-1])
             if settings.bot_mode == "live":
                 logger.info("[LIVE][WS] {} Signal: {} px={} meta={} df_len={}", coin, signal.action, px, signal.meta, len(df))
-                executor.execute_signal(signal, asset_id=asset_id, price=px)
+                executor.execute_signal(signal, asset_id=asset_id, coin=coin, price=px)
             else:
                 logger.info("[PAPER][WS] {} Signal: {} px={} meta={} df_len={}", coin, signal.action, px, signal.meta, len(df))
-                executor.execute_signal(signal, asset_id=asset_id, price=px)
+                executor.execute_signal(signal, asset_id=asset_id, coin=coin, price=px)
 
     # Create tasks for all coins plus notifications
     tasks = [consume_candles_for_coin(coin) for coin in trading_coins]

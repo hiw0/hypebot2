@@ -25,7 +25,7 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - PYTHONUNBUFFERED=1
-      - BOT_MODE=live
+      - BOT_MODE=paper
       - BASE_COINS=BTC,ETH
       - STRATEGY=mean_reversion
     volumes:
