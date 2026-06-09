@@ -39,12 +39,12 @@ class Executor:
         try:
             user_state = self.client.info().user_state(self.settings.hl_wallet_address)
             margin_summary = user_state.get('marginSummary', {})
-            account_value = float(margin_summary.get('accountValue', '910.0'))  # fallback to known value
+            account_value = float(margin_summary.get('accountValue', self.settings.paper_equity_usd))
             logger.info(f"Real account equity: ${account_value}")
             return account_value
         except Exception as e:
             logger.warning(f"Failed to get account equity, using fallback: {e}")
-            return 910.0  # Conservative fallback based on known account value
+            return self.settings.paper_equity_usd
 
     def _gen_cloid(self) -> str:
         return uuid.uuid4().hex
@@ -91,10 +91,10 @@ class Executor:
         if qty <= 0:
             logger.warning("Position size computed as 0. Skipping order.")
             return
-        
-        # Round quantity to 4 decimal places for crypto assets (most standard)
-        qty = round(qty, 4)
-        
+
+        _, sz_decimals = self.client.get_decimals(asset_id)
+        qty = round(qty, sz_decimals)
+
         # Log the calculated order details
         notional_value = qty * price
         logger.info(f"Order details: qty={qty}, price={price}, notional=${notional_value:.2f}")

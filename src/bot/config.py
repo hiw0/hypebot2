@@ -30,6 +30,7 @@ class Settings(BaseModel):
     max_leverage: float = Field(default=2.0, alias="MAX_LEVERAGE")
     max_position_usd: float = Field(default=200.0, alias="MAX_POSITION_USD")
     risk_per_trade: float = Field(default=0.01, alias="RISK_PER_TRADE")
+    paper_equity_usd: float = Field(default=1000.0, alias="PAPER_EQUITY_USD")
     fee_rate: float = Field(default=0.0005, alias="FEE_RATE")
     slippage_bps: float = Field(default=2, alias="SLIPPAGE_BPS")
 
@@ -126,6 +127,7 @@ def get_settings() -> Settings:
             "MAX_LEVERAGE": os.environ.get("MAX_LEVERAGE", "2.0"),
             "MAX_POSITION_USD": os.environ.get("MAX_POSITION_USD", "200.0"),
             "RISK_PER_TRADE": os.environ.get("RISK_PER_TRADE", "0.01"),
+            "PAPER_EQUITY_USD": os.environ.get("PAPER_EQUITY_USD", "1000.0"),
             "FEE_RATE": os.environ.get("FEE_RATE", "0.0005"),
             "SLIPPAGE_BPS": os.environ.get("SLIPPAGE_BPS", "2"),
             "LOG_LEVEL": os.environ.get("LOG_LEVEL", "INFO"),
